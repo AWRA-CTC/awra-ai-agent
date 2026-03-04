@@ -3,9 +3,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
 import borrowerRoutes from "./routes/borrower";
+import { startLoanMonitor } from "./services/loanMonitor";
 
 dotenv.config();
 connectDB();
+startLoanMonitor();
 
 const app = express();
 app.use(cors());
