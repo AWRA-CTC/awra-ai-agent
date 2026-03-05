@@ -145,12 +145,6 @@ export const startLoanMonitor = () => {
           const healthFactor = await calculateHealthFactor(loan);
 
           if (healthFactor >= HEALTH_FACTOR_WARNING_THRESHOLD) {
-            await sendWarningEmail(
-              borrower.email,
-              borrower.loanId,
-              healthFactor,
-            );
-            console.log("sent mail");
             continue;
           }
 
@@ -164,7 +158,13 @@ export const startLoanMonitor = () => {
             continue;
           }
 
-          await sendWarningEmail(borrower.email, borrower.loanId, healthFactor);
+          await sendWarningEmail(
+            loan.principal,
+            loan.borrowAsset,
+            borrower.email,
+            borrower.loanId,
+            healthFactor,
+          );
 
           borrower.lastNotifiedHealthFactor = healthFactor;
           borrower.lastNotifiedAt = new Date();

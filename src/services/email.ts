@@ -18,6 +18,8 @@ const getResendClient = (): Resend => {
 };
 
 export const sendWarningEmail = async (
+  principal: bigint,
+  borrowAsset: string,
   email: string,
   loanId: string,
   healthFactor: number,
@@ -28,6 +30,13 @@ export const sendWarningEmail = async (
 
   const resend = getResendClient();
   const formattedHealthFactor = healthFactor.toFixed(4);
+  const principalFormatted = (Number(principal) / 1e18).toLocaleString(
+    undefined,
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    },
+  );
 
   try {
     await resend.emails.send({
@@ -42,6 +51,8 @@ export const sendWarningEmail = async (
         "Your AWRA loan health factor is in a risky range.",
         "",
         `Loan ID: ${loanId}`,
+        `Borrow Asset: ${borrowAsset}`,
+        `Principal: ${principalFormatted}`,
         `Current health factor: ${formattedHealthFactor}`,
         "",
         "If the health factor drops below 1, your loan can be liquidated.",
@@ -56,6 +67,8 @@ export const sendWarningEmail = async (
                     padding:20px;
                     text-align:center;
                     font-family:Arial, sans-serif;
+                    max-width:600px;
+                    margin:0 auto; 
                     color:#333;">
           <h1 style="color:#e31c32;
                      font-size:32px;
@@ -70,8 +83,10 @@ export const sendWarningEmail = async (
           <p style="font-size:14px;line-height:1.5;">
             Your AWRA loan health factor is in a risky range.
           </p>
-          <p style="font-size:14px;line-height:1.5;">
+          <p style="font-size:14px;line-height:1.5;text-align:left;">
             <strong>Loan ID:</strong> ${loanId}<br/>
+            <strong>Borrow Asset:</strong> ${borrowAsset}<br/>
+            <strong>Principal:</strong> ${principalFormatted}<br/>
             <strong>Current health factor:</strong> ${formattedHealthFactor}
           </p>
           <p style="font-size:14px;line-height:1.5;">
